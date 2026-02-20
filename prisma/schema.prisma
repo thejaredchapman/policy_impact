@@ -1,0 +1,178 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Core Models ───────────────────────────────────────────
+
+model PolicyChange {
+  id                      String             @id @default(cuid())
+  title                   String
+  summary                 String             @db.Text
+  rawContent              String?            @db.Text
+  type                    ChangeType
+  status                  ChangeStatus       @default(TRACKING)
+  sourceUrl               String
+  sourceType              SourceType
+  federalRegisterNumber   String?            @unique
+  executiveOrderNumber    Int?
+  signingDate             DateTime?
+  publicationDate         DateTime?
+  effectiveDate           DateTime?
+  agencies                String[]
+  topics                  String[]
+  cfrReferences           String[]
+
+  impactRatings           ImpactRating[]
+  upcomingEvents          UpcomingEvent[]
+  dailyDigestEntries      DailyDigestEntry[]
+
+  aiProvider              String?
+  aiModel                 String?
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+  ingestedAt              DateTime           @default(now())
+
+  @@index([type, publicationDate])
+  @@index([publicationDate])
+  @@index([effectiveDate])
+  @@index([type])
+}
+
+model ImpactRating {
+  id              String              @id @default(cuid())
+  policyChangeId  String
+  policyChange    PolicyChange        @relation(fields: [policyChangeId], references: [id], onDelete: Cascade)
+
+  category        DemographicCategory
+  subcategory     String
+  score           Int
+  explanation     String              @db.Text
+  confidence      Float               @default(0.5)
+
+  aiProvider      String?
+  aiModel         String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  @@unique([policyChangeId, category, subcategory])
+  @@index([category, subcategory])
+  @@index([policyChangeId])
+}
+
+model UpcomingEvent {
+  id              String        @id @default(cuid())
+  title           String
+  description     String        @db.Text
+  eventType       EventType
+  eventDate       DateTime
+  policyChangeId  String?
+  policyChange    PolicyChange? @relation(fields: [policyChangeId], references: [id], onDelete: SetNull)
+  sourceUrl       String?
+  location        String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([eventDate])
+  @@index([eventType, eventDate])
+}
+
+model DailyDigest {
+  id        String             @id @default(cuid())
+  date      DateTime           @unique @db.Date
+  headline  String
+  summary   String             @db.Text
+  entries   DailyDigestEntry[]
+
+  aiProvider String?
+  aiModel    String?
+  createdAt  DateTime          @default(now())
+}
+
+model DailyDigestEntry {
+  id              String       @id @default(cuid())
+  dailyDigestId   String
+  dailyDigest     DailyDigest  @relation(fields: [dailyDigestId], references: [id], onDelete: Cascade)
+  policyChangeId  String
+  policyChange    PolicyChange @relation(fields: [policyChangeId], references: [id], onDelete: Cascade)
+  orderIndex      Int
+  briefSummary    String       @db.Text
+
+  @@unique([dailyDigestId, policyChangeId])
+  @@index([dailyDigestId])
+}
+
+model IngestionLog {
+  id                String          @id @default(cuid())
+  source            SourceType
+  status            IngestionStatus
+  documentsFound    Int             @default(0)
+  documentsNew      Int             @default(0)
+  documentsUpdated  Int             @default(0)
+  errorMessage      String?         @db.Text
+  durationMs        Int?
+  startedAt         DateTime        @default(now())
+  completedAt       DateTime?
+}
+
+// ─── Enums ─────────────────────────────────────────────────
+
+enum ChangeType {
+  EXECUTIVE_ORDER
+  LEGISLATION
+  AGENCY_RULE
+  AGENCY_PROPOSED_RULE
+  AGENCY_NOTICE
+  APPOINTMENT
+  PROCLAMATION
+  MEMORANDUM
+  OTHER
+}
+
+enum ChangeStatus {
+  TRACKING
+  IN_EFFECT
+  PENDING_IMPLEMENTATION
+  CHALLENGED
+  BLOCKED
+  OVERTURNED
+  SUPERSEDED
+}
+
+enum SourceType {
+  FEDERAL_REGISTER
+  AP_NEWS
+  MANUAL
+}
+
+enum DemographicCategory {
+  SEX
+  MARITAL_STATUS
+  SEXUAL_ORIENTATION
+  RELIGION
+  ETHNICITY
+  SALARY_BRACKET
+  US_STATE
+  POLITICAL_AFFILIATION
+}
+
+enum EventType {
+  HEARING
+  DEADLINE
+  IMPLEMENTATION
+  COURT_DATE
+  VOTE
+  COMMENT_PERIOD_END
+  OTHER
+}
+
+enum IngestionStatus {
+  SUCCESS
+  PARTIAL_FAILURE
+  FAILURE
+}

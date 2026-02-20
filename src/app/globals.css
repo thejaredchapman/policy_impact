@@ -1,0 +1,198 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-geist-mono);
+
+  /* Terminal base (dark defaults) */
+  --color-term-bg: #0d1117;
+  --color-term-bg-light: #161b22;
+  --color-term-border: #30363d;
+  --color-term-text: #88cc88;
+  --color-term-heading: #33ff33;
+  --color-term-dim: #484f58;
+  --color-term-prompt: #33ff33;
+
+  /* Rubric colors */
+  --color-rubric-critical: #ff3333;
+  --color-rubric-adverse: #ffaa00;
+  --color-rubric-neutral: #888888;
+  --color-rubric-favorable: #00ccff;
+  --color-rubric-beneficial: #33ff33;
+
+  /* Badge type colors */
+  --color-type-exec: #ff6666;
+  --color-type-legislation: #00ccff;
+  --color-type-rule: #cc88ff;
+  --color-type-notice: #ffaa00;
+  --color-type-appointment: #33ff33;
+}
+
+/* ── Base ─────────────────────────────────────── */
+
+html {
+  background-color: var(--color-term-bg);
+  color: var(--color-term-text);
+  font-family: var(--font-mono), ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, monospace;
+}
+
+body {
+  background-color: var(--color-term-bg);
+  min-height: 100vh;
+  line-height: 1.7;
+}
+
+/* ── Light Theme Overrides ────────────────────── */
+
+html.light {
+  --color-term-bg: #f4f1eb;
+  --color-term-bg-light: #eae6df;
+  --color-term-border: #c8c3b8;
+  --color-term-text: #2d4a2d;
+  --color-term-heading: #1a6b1a;
+  --color-term-dim: #7a7568;
+  --color-term-prompt: #1a6b1a;
+
+  --color-rubric-critical: #cc2200;
+  --color-rubric-adverse: #c07800;
+  --color-rubric-neutral: #6b6b6b;
+  --color-rubric-favorable: #0077aa;
+  --color-rubric-beneficial: #1a6b1a;
+
+  --color-type-exec: #cc3333;
+  --color-type-legislation: #0077aa;
+  --color-type-rule: #8855bb;
+  --color-type-notice: #c07800;
+  --color-type-appointment: #1a6b1a;
+}
+
+/* ── Scrollbar ────────────────────────────────── */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-term-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-term-border);
+  border: 1px solid var(--color-term-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-term-dim);
+}
+
+/* ── CRT Scanline Overlay ─────────────────────── */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+}
+
+html.light body::after {
+  background: none;
+}
+
+/* ── Blinking Cursor ──────────────────────────── */
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* ── Selection ────────────────────────────────── */
+
+html.dark ::selection {
+  background: rgba(51, 255, 51, 0.2);
+  color: #33ff33;
+}
+
+html.light ::selection {
+  background: rgba(26, 107, 26, 0.15);
+  color: #1a6b1a;
+}
+
+/* ── Links ────────────────────────────────────── */
+
+a {
+  color: var(--color-rubric-favorable);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ── Form Controls ────────────────────────────── */
+
+select,
+input[type="text"],
+input[type="search"],
+input[type="date"] {
+  background-color: var(--color-term-bg) !important;
+  color: var(--color-term-text) !important;
+  border: 1px solid var(--color-term-border) !important;
+  border-radius: 0 !important;
+  font-family: inherit !important;
+  outline: none !important;
+}
+
+select:focus,
+input:focus {
+  border-color: var(--color-term-heading) !important;
+  box-shadow: none !important;
+}
+
+select option {
+  background-color: var(--color-term-bg);
+  color: var(--color-term-text);
+}
+
+/* ── Loading Blink ────────────────────────────── */
+
+@keyframes terminal-load {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.terminal-loading {
+  animation: terminal-load 1.2s ease-in-out infinite;
+}
+
+/* ── Date Input ──────────────────────────────── */
+
+html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6) sepia(1) saturate(3) hue-rotate(80deg);
+  cursor: pointer;
+}
+
+html.dark input[type="date"] {
+  color-scheme: dark;
+}
+
+html.light input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  cursor: pointer;
+}
+
+html.light input[type="date"] {
+  color-scheme: light;
+}
