@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint",
     "setup": "npm install && cp -n .env.example .env.local || true && npx prisma generate && npx prisma db push && npx tsx prisma/seed.ts",
@@ -15,9 +16,6 @@
     "db:studio": "prisma studio",
     "ingest": "curl -X POST http://localhost:3000/api/ingest",
     "bulk-ingest": "npx tsx --tsconfig tsconfig.json scripts/bulk-ingest.ts"
-  },
-  "prisma": {
-    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
