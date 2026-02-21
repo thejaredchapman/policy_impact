@@ -4,38 +4,65 @@ import type { APArticle } from "@/types";
 
 const parser = new Parser();
 
+const DEFAULT_RSS_FEEDS = [
+  "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml",
+  "https://rss.politico.com/politics-news.xml",
+  "https://thehill.com/feed/",
+];
+
 function isPolicyRelevant(title: string, content: string): boolean {
   const text = `${title} ${content}`.toLowerCase();
   return POLICY_KEYWORDS.some((kw) => text.includes(kw));
 }
 
+function getRSSFeeds(): string[] {
+  const envFeeds = process.env.NEWS_RSS_FEEDS || process.env.AP_NEWS_RSS_URL;
+  if (envFeeds) {
+    return envFeeds.split(",").map((url) => url.trim()).filter(Boolean);
+  }
+  return DEFAULT_RSS_FEEDS;
+}
+
 export async function fetchAPPoliticsArticles(options: {
   maxArticles?: number;
 } = {}): Promise<APArticle[]> {
-  const { maxArticles = 30 } = options;
-  const rssUrl =
-    process.env.AP_NEWS_RSS_URL ||
-    "https://rsshub.app/apnews/topics/apf-politics";
-
-  const feed = await parser.parseURL(rssUrl);
+  const { maxArticles = 50 } = options;
+  const feeds = getRSSFeeds();
 
   const articles: APArticle[] = [];
+  const seenLinks = new Set<string>();
 
-  for (const item of feed.items) {
-    if (articles.length >= maxArticles) break;
+  for (const rssUrl of feeds) {
+    try {
+      const feed = await parser.parseURL(rssUrl);
 
-    const title = item.title || "";
-    const content = item.contentSnippet || item.content || "";
+      for (const item of feed.items) {
+        if (articles.length >= maxArticles) break;
 
-    if (!isPolicyRelevant(title, content)) continue;
+        const title = item.title || "";
+        const link = item.link || "";
+        const content = item.contentSnippet || item.content || "";
 
-    articles.push({
-      title,
-      link: item.link || "",
-      pubDate: item.pubDate || new Date().toISOString(),
-      contentSnippet: item.contentSnippet || "",
-      content: item.content || item.contentSnippet || "",
-    });
+        // Skip duplicates across feeds
+        if (!link || seenLinks.has(link)) continue;
+
+        if (!isPolicyRelevant(title, content)) continue;
+
+        seenLinks.add(link);
+        articles.push({
+          title,
+          link,
+          pubDate: item.pubDate || new Date().toISOString(),
+          contentSnippet: item.contentSnippet || "",
+          content: item.content || item.contentSnippet || "",
+        });
+      }
+    } catch (e) {
+      // Log but continue with other feeds if one fails
+      console.warn(
+        `Failed to fetch RSS feed ${rssUrl}: ${e instanceof Error ? e.message : String(e)}`
+      );
+    }
   }
 
   return articles;

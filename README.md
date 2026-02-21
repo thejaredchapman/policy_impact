@@ -1,8 +1,21 @@
-# PolicyPulse
+# GovLens
 
-A non-partisan policy tracking application that delivers neutral, AP-style daily reports on U.S. administration policy changes. Includes a searchable repository of changes, AI-powered demographic impact ratings, a public REST API, and an upcoming events tracker.
+GovLens is a non-partisan policy tracking tool that delivers neutral, AP-style daily reports on U.S. administration policy changes. Browse the latest executive orders, agency rules, and legislation — then see how each change is rated for impact across demographics like income, ethnicity, state, and more.
+
+The app includes a searchable repository of changes, AI-powered demographic impact ratings, a personalized impact calculator, a public REST API, and an upcoming events tracker.
 
 All generated content follows Associated Press style guidelines: factual, third-person, no editorializing. A loaded-word blocklist and strict system prompts enforce neutrality across every AI-generated summary and impact rating.
+
+## How to See Personalized Policy Impact
+
+GovLens includes a **Personalized Impact Calculator** that lets you set your demographic profile and see how recent policy changes may affect you:
+
+1. Navigate to the **~/impact** page (or click the demographics link on the dashboard)
+2. Select your demographics across up to 8 categories: sex, marital status, sexual orientation, religion, ethnicity, salary bracket, U.S. state, and political affiliation
+3. Click **"> calculate_impact"** to see your personalized results
+4. Review your overall impact score, per-category breakdown, and the specific policies with the most positive and negative effects on your profile
+
+Your demographic profile is stored in your browser's local storage and is never sent to or persisted on any server — it is only used at the moment you request an impact calculation.
 
 ---
 
@@ -86,7 +99,7 @@ If you already have PostgreSQL running on `localhost:5432`:
 
 ```bash
 # 1. Clone and enter the project
-cd policypulse
+cd govlens
 
 # 2. Copy and edit your environment variables
 cp .env.example .env.local
@@ -122,8 +135,8 @@ npm install
 
 **Option A: Docker (recommended)**
 ```bash
-docker run --name policypulse-db \
-  -e POSTGRES_DB=policypulse \
+docker run --name govlens-db \
+  -e POSTGRES_DB=govlens \
   -e POSTGRES_USER=postgres \
   -e POSTGRES_PASSWORD=dev \
   -p 5432:5432 \
@@ -132,7 +145,7 @@ docker run --name policypulse-db \
 
 **Option B: Local PostgreSQL**
 ```bash
-createdb policypulse
+createdb govlens
 ```
 
 ### 3. Configure Environment Variables
@@ -145,7 +158,7 @@ Edit `.env.local` and fill in your values:
 
 ```env
 # Database -- match your PostgreSQL setup
-DATABASE_URL="postgresql://postgres:dev@localhost:5432/policypulse"
+DATABASE_URL="postgresql://postgres:dev@localhost:5432/govlens"
 
 # AI Provider -- at least one key required
 ANTHROPIC_API_KEY="sk-ant-..."
@@ -217,7 +230,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Project Structure
 
 ```
-policypulse/
+govlens/
 ├── prisma/
 │   ├── schema.prisma          # Database schema (6 models, 7 enums)
 │   └── seed.ts                # Sample data seeder
@@ -331,7 +344,7 @@ CORS is enabled on all `/api/*` routes.
 
 ## Neutrality Approach
 
-PolicyPulse enforces factual, non-partisan content through multiple layers:
+GovLens enforces factual, non-partisan content through multiple layers:
 
 1. **System prompts** -- Every AI call uses a base prompt requiring AP-style writing: factual, third-person, no editorializing, no loaded language, inverted pyramid structure.
 2. **Loaded-word blocklist** -- Post-processing checks for words like "controversial," "radical," "unprecedented," etc. If detected, the AI is asked to regenerate.
@@ -367,7 +380,7 @@ For Vercel Pro plans, you can add a second cron run to catch afternoon updates:
 ## Troubleshooting
 
 **"Can't reach database server"**
-Make sure PostgreSQL is running and `DATABASE_URL` in `.env.local` matches your setup. For Docker: `docker start policypulse-db`.
+Make sure PostgreSQL is running and `DATABASE_URL` in `.env.local` matches your setup. For Docker: `docker start govlens-db`.
 
 **"Module not found: @prisma/client"**
 Run `npx prisma generate` to regenerate the Prisma client.

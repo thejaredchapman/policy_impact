@@ -34,7 +34,7 @@ export function Header() {
         <div className="flex items-center justify-between h-14">
           <div className="flex items-center gap-3">
             <span className="text-[var(--color-term-heading)] font-bold text-base">
-              user@policypulse<span className="text-[var(--color-term-dim)]">:</span>{currentRoute}<span className="text-[var(--color-term-dim)]"> $</span>
+              user@govlens<span className="text-[var(--color-term-dim)]">:</span>{currentRoute}<span className="text-[var(--color-term-dim)]"> $</span>
             </span>
             <span className="cursor-blink text-[var(--color-term-heading)]">_</span>
           </div>

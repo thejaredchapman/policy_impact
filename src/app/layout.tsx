@@ -11,13 +11,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PolicyPulse Terminal",
+  title: "GovLens",
   description:
-    "Track U.S. policy changes with neutral, AP-style reporting and personalized demographic impact analysis.",
+    "Track U.S. policy changes with neutral, AP-style reporting and see how they affect you with personalized demographic impact analysis.",
   openGraph: {
-    title: "PolicyPulse Terminal",
+    title: "GovLens",
     description:
-      "Non-partisan policy tracking with demographic impact ratings.",
+      "Non-partisan policy tracking with personalized demographic impact ratings.",
     type: "website",
   },
 };
@@ -38,7 +38,7 @@ export default function RootLayout({
             <span className="text-[#ff5f56]">[&times;]</span>
             <span className="text-[#ffbd2e]">[&ndash;]</span>
             <span className="text-[#27c93f]">[&square;]</span>
-            <span className="text-[var(--color-term-dim)] ml-2">policypulse-terminal &mdash; bash</span>
+            <span className="text-[var(--color-term-dim)] ml-2">govlens &mdash; bash</span>
           </div>
           <Header />
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -136,10 +136,10 @@ export default function APIDocsPage() {
           # API Documentation
         </h1>
         <p className="text-sm text-[var(--color-term-dim)] mt-1">
-          &gt; man policypulse-api
+          &gt; man govlens-api
         </p>
         <p className="text-base text-[var(--color-term-text)] mt-2">
-          PolicyPulse provides a public REST API for accessing policy change
+          GovLens provides a public REST API for accessing policy change
           data, impact ratings, and AI-generated summaries. All responses follow
           a consistent JSON envelope format.
         </p>

@@ -77,6 +77,33 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
+      {/* App Description */}
+      <section className="border border-[var(--color-term-border)] p-4 sm:p-6">
+        <h1 className="text-xl font-bold text-[var(--color-term-heading)] mb-2">
+          # Welcome to GovLens
+        </h1>
+        <p className="text-base text-[var(--color-term-text)] leading-relaxed mb-3">
+          GovLens is a non-partisan policy tracking tool that delivers neutral, AP-style
+          daily reports on U.S. administration policy changes. Browse the latest executive
+          orders, agency rules, and legislation — then see how each change is rated for
+          impact across demographics like income, ethnicity, state, and more.
+        </p>
+        <p className="text-base text-[var(--color-term-text)] leading-relaxed mb-4">
+          All content follows Associated Press style guidelines: factual, third-person,
+          and free of editorializing. Impact scores are AI-generated with confidence
+          ratings and are intended as informational, not prescriptive.
+        </p>
+        <Link
+          href="/impact"
+          className="inline-block px-4 py-2 border border-[var(--color-term-heading)] text-[var(--color-term-heading)] text-base font-bold hover:bg-[var(--color-term-heading)] hover:text-[var(--color-term-bg)] transition-colors"
+        >
+          &gt; Set your demographics to see how policies affect you
+        </Link>
+        <p className="text-sm text-[var(--color-term-dim)] mt-2">
+          Your profile is stored locally in your browser and is never persisted on any server.
+        </p>
+      </section>
+
       <div className="text-[var(--color-term-heading)] text-base">
         &gt; loading daily digest...<span className="text-[var(--color-term-dim)]"> done</span>
       </div>
